@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portal de Recursos para Consultores – EduSalud</title>
-  <meta name="description" content="Descarga de toolkits (PPT, logos, manuales, social kit) para consultores de cursos y diplomados, protegida por código de acceso." />
+  <meta name="description" content="Descarga de toolkits (PPT, logos, manuales de marca, social kit, formatos). Acceso mediante código otorgado por coordinación." />
   <style>
     :root{
       --bg:#0b1020;
@@ -114,103 +114,107 @@
     .footer{ margin:28px 0 8px; color:var(--muted); font-size:12px; text-align:center; }
     .hidden{ display:none !important; }
     .sr-only{ position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden }
-  
-  /* ---------- Loading screen styles (insertado) ---------- */
 
-  /* import fuente monospace para el ASCII */
-  @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap");
+    /* Loader (original) */
+    .edu-loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: linear-gradient(180deg, rgba(2,6,12,0.94), rgba(0,0,0,0.96));
+      color: #fff;
+      z-index: 99999;
+      padding: 18px;
+      text-align: center;
+      font-family: "Roboto Mono", monospace;
+    }
+    .edu-loader.hidden { display: none !important; }
+    .loader-ring {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      display:grid;
+      place-items:center;
+      box-shadow: 0 8px 40px rgba(90,169,255,0.08), inset 0 0 16px rgba(63,176,255,0.04);
+    }
+    .loader-ring:after{
+      content: "";
+      width: 62px;
+      height: 62px;
+      border-radius:50%;
+      border: 4px solid rgba(255,255,255,0.06);
+      border-top-color: #6ee7ff;
+      animation: spin 900ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader-text { font-weight:700; font-size:15px; letter-spacing:0.6px; color:#dff7ff; }
+    .loader-progress {
+      width: 380px;
+      max-width: calc(100% - 48px);
+      height: 10px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .loader-progress > i {
+      display:block; height:100%; width:0%; background: linear-gradient(90deg,#6ee7ff,#7c5cff); border-radius:999px;
+      transition: width .14s linear;
+    }
+    .loader-percent { font-size:13px; color:rgba(255,255,255,0.75); margin-top:6px; }
 
-  /* Reset mínimo y estilos para overlay */
-  #loadingOverlay { position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.72); }
-  #loadingOverlay.hidden { display:none !important; }
+    /* Layout curso */
+    .course-row { display:flex; gap:18px; align-items:flex-start; }
+    .card-left-wrapper { flex: 0 0 360px; }
+    .card-right { flex: 1 1 auto; }
+    @media (max-width:900px) { .course-row { flex-direction:column } .card-left-wrapper { width:100%; } }
 
-  .speed-indicator { position: absolute; top: 20px; right: 20px; color: white; font-size: 16px; background: rgba(0, 0, 0, 0.3); padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(5px); z-index: 10000; }
-
-  .container { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-
-  .card-stream { position: absolute; width: 100vw; height: 180px; display: flex; align-items: center; overflow: visible; z-index: 3; }
-  .card-line { display: flex; align-items: center; gap: 60px; white-space: nowrap; user-select:none; }
-
-  .card-wrapper { position: relative; width: 400px; height: 250px; flex-shrink: 0; }
-  .card { position: absolute; top: 0; left: 0; width: 400px; height: 250px; border-radius: 15px; overflow: hidden; }
-
-  .card-line.single { justify-content: center; }
-  .card-line.dragging { cursor: grabbing; }
-
-  .card-normal {
-    background: transparent;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-    color: white;
-    z-index: 2;
-    position: relative;
-    overflow: hidden;
-    --clip-right: 0%;
-    clip-path: inset(0 var(--clip-right, 0%) 0 0);
-    transition: clip-path 0.28s ease;
-  }
-  .card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 15px;
-    transition: all 0.3s ease;
-    filter: brightness(1.08) contrast(1.08);
-  }
-
-  .card-wrapper[data-scanned] .card-image {
-    filter: brightness(1.18) contrast(1.16) saturate(1.1);
-  }
-
-  .card-ascii {
-    z-index:1;
-    position:absolute;
-    top:0;
-    left:0;
-    width:400px;
-    height:250px;
-    color: rgba(220,210,255,0.72);
-    font-family: 'Roboto Mono', monospace;
-    font-size:11px;
-    line-height:13px;
-    white-space: pre;
-    overflow:hidden;
-    background: rgba(10,18,38,0.86);
-    box-shadow: inset 0 0 35px rgba(102,126,234,0.25);
-    --clip-left: 100%;
-    clip-path: inset(0 0 0 var(--clip-left, 100%));
-    transition: clip-path 0.28s ease;
-  }
-
-  /* Scanner light bar */
-  .scanner { display:none; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:4px; height:300px; border-radius:30px; background: linear-gradient(to bottom, transparent, rgba(0,255,255,0.8), rgba(0,255,255,1), rgba(0,255,255,0.8), transparent); box-shadow:0 0 20px rgba(0,255,255,0.8), 0 0 40px rgba(0,255,255,0.4); z-index:10; }
-
-  #particleCanvas { position:absolute; top:50%; left:0; transform:translateY(-50%); width:100vw; height:250px; z-index:0; pointer-events:none; }
-  #scannerCanvas { position:absolute; top:50%; left:-3px; transform:translateY(-50%); width:100vw; height:300px; z-index:15; pointer-events:none; }
-
-  .scan-effect { position:absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(0,255,255,0.4), transparent); animation: scanEffect 0.6s ease-out; pointer-events:none; z-index:5; }
-
-  @keyframes scanEffect { 0%{transform:translateX(-100%);opacity:0;}50%{opacity:1;}100%{transform:translateX(100%);opacity:0;} }
-
-  /* fin styles de carga */
-
-</style>
+    /* Vista Master */
+    #master { margin-top:16px; }
+    .master-grid { display:grid; gap:16px; }
+    .master-card{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.06));
+      border: 1px solid rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:18px;
+      box-shadow:0 8px 24px rgba(0,0,0,.25);
+      backdrop-filter: blur(4px);
+    }
+    .master-card .left{ min-height:220px; }
+    .master-card .right .filelist{ margin-top:0; }
+    @media (max-width:900px){
+      .master-card{ grid-template-columns: 1fr; }
+      .master-card .left{ order: -1; }
+    }
+    .master-search{
+      display:flex; gap:10px; align-items:center;
+      margin: 6px 0 14px;
+    }
+    .master-search input{
+      flex:1 1 auto;
+      border:1px solid rgba(255,255,255,.08);
+      background:#0e1630; color:var(--text);
+      padding:10px 12px; border-radius:12px; outline:none;
+    }
+    .master-search input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(90,169,255,.12);
+    }
+    .master-search button{
+      border:none; background:#19213d; color:var(--text);
+      border:1px solid rgba(255,255,255,.06);
+      padding:10px 14px; border-radius:12px; cursor:pointer;
+    }
+    .master-search button:hover{ transform: translateY(-1px); }
+  </style>
 </head>
-  <!-- Loading overlay: pantalla de carga con animación tipo scanner/card-stream -->
-  <div id="loadingOverlay" class="hidden" aria-hidden="true">
-    <div class="speed-indicator">Speed: <span id="speedValue">120</span> px/s</div>
-
-    <div class="container">
-      <canvas id="particleCanvas"></canvas>
-      <canvas id="scannerCanvas"></canvas>
-
-      <div class="scanner" aria-hidden="true"></div>
-
-      <div class="card-stream" id="cardStream">
-        <div class="card-line" id="cardLine"></div>
-      </div>
-    </div>
-  </div>
-  <!-- /Loading overlay -->
+<body>
   <div class="wrap">
     <header>
       <div style="display:flex; gap:16px; align-items:center;">
@@ -219,7 +223,7 @@
         </div>
         <div>
           <h1>Portal de Recursos para Consultores · EduSalud</h1>
-          <p class="lead">Descargue materiales oficiales (PPT, logos, manuales de marca, social kit, formatos). Acceso mediante código otorgado por coordinación.</p>
+          <p class="lead">Descargue materiales oficiales (PPT, logos, manual de marca, social kit, formatos). Acceso mediante código otorgado por el depaetamento de comunicaciones.</p>
         </div>
       </div>
 
@@ -228,7 +232,7 @@
       </div>
     </header>
 
-    <!-- BLOQUE DE ACCESO -->
+    <!-- ACCESO -->
     <section id="access" class="card" aria-labelledby="access-title">
       <h2 id="access-title" class="sr-only">Acceso restringido</h2>
       <div class="grid cols-2" style="align-items:center;">
@@ -238,7 +242,7 @@
             <input id="code" class="input" type="text" placeholder="Ej. ABC0-0000" autocomplete="one-time-code" aria-label="Código de acceso" />
             <button id="btn-enter" class="btn" type="button">Entrar</button>
           </div>
-          <div id="msg" class="msg">Si no tiene código, solicítelo a coordinación.</div>
+          <div id="msg" class="msg">Si no tiene código, solicítelo a comunicaciones.</div>
         </div>
 
         <div class="access-hero" aria-hidden="true">
@@ -247,7 +251,7 @@
       </div>
     </section>
 
-    <!-- BLOQUE CONTENIDO RESTRINGIDO -->
+    <!-- CONTENIDO (1 curso) -->
     <section id="content" class="hidden" style="margin-top:16px;">
       <div class="card" id="courseCard">
         <div class="course">
@@ -263,252 +267,51 @@
           </div>
 
           <hr style="border:0; border-top:1px solid rgba(255,255,255,.06);" />
-          <div class="filelist" id="filelist" aria-live="polite"></div>
+
+          <div class="course-row" style="margin-top:12px;">
+            <div class="card-left-wrapper" aria-hidden="false"><!-- insertElectricCard() coloca la tarjeta aquí --></div>
+            <div class="card-right">
+              <div class="filelist" id="filelist" aria-live="polite"></div>
+            </div>
+          </div>
+
         </div>
       </div>
 
       <p class="footer">© <span id="year"></span> EduSalud · Materiales oficiales para consultores. by DanielZavala. GraphicDesigner.</p>
     </section>
+
+    <!-- VISTA MAESTRA -->
+    <section id="master" class="hidden">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
+        <h3 style="margin:0">Vista Maestra · Todos los cursos</h3>
+        <div class="row">
+          <button id="btn-master-copy" class="btn secondary" type="button">Compartir enlace con código</button>
+          <button id="btn-master-exit" class="btn secondary" type="button">Salir</button>
+        </div>
+      </div>
+
+      <!-- Buscador -->
+      <div class="master-search">
+        <input id="masterSearch" type="text" placeholder="Buscar por nombre o tag (ej. GASH, MBF, AHGO2)..." />
+        <button id="masterSearchClear" type="button" title="Limpiar">Limpiar</button>
+      </div>
+
+      <div class="master-grid" id="masterGrid"></div>
+      <p class="footer">© <span id="year_master"></span> EduSalud · Materiales oficiales para consultores. by DanielZavala. GraphicDesigner.</p>
+    </section>
   </div>
 
-  <script>
-    // Utilitarios DOM
-    const $ = sel => document.querySelector(sel);
+  <!-- Loader -->
+  <div id="eduLoader" class="edu-loader hidden" aria-hidden="true" role="alert" aria-live="polite">
+    <div class="loader-ring" aria-hidden="true"></div>
+    <div class="loader-text">Cargando recursos...</div>
+    <div class="loader-progress" aria-hidden="true"><i id="loaderBar"></i></div>
+    <div id="loaderPercent" class="loader-percent">0%</div>
+  </div>
 
-    // Convierte ArrayBuffer -> hex
-    const toHex = buffer => Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2,'0')).join('');
-    async function sha256Hex(text) {
-      const data = new TextEncoder().encode(String(text).trim());
-      const hash = await crypto.subtle.digest('SHA-256', data);
-      return toHex(hash);
-    }
-
-    function setQueryParam(key, value) {
-      const url = new URL(window.location.href);
-      if (value == null) url.searchParams.delete(key); else url.searchParams.set(key, value);
-      history.replaceState({}, '', url);
-    }
-
-    function downloadFile(url) { window.open(url, '_blank', 'noopener'); }
-
-    // MAPA DE ACCESO (SHA-256 de los códigos permitidos)
-    const ACCESS_HASH_MAP = {
-      "2291db02a1c676fcb2f5effd7bba8232c1d7eb75ab236f4880aa8ce0536359c0": {
-        title: "Diplomado en Gerencia y Administración de Servicios Hospitalarios (GASH) – 3ª Ed. 2025",
-        meta: "Material oficial para docentes/consultores (logos, PPT, manual de marca, social kit)",
-        files: [
-          { label: "Logos (PNG)", url: "https://drive.google.com/drive/folders/1ooz6Z0YICAqP7PP5UgmPq1v1DFIkv9pi?usp=sharing" },
-          { label: "Plantilla PPT (PPTX)", url: "https://drive.google.com/drive/folders/14E42MPlcjsIcc6OWNCYJ2J1HRzcdr21F?usp=sharing" },
-          { label: "Manual de Marca (PDF)", url: "https://drive.google.com/file/d/100O3Xp4CzybPdo-uEJqjNLpvbPMUeB-S/view?usp=sharing" },
-          { label: "Social Kit (JPG)", url: "https://drive.google.com/drive/folders/1FbTQSAMZk84de7ykDs9YmMmp7z1Pyufr?usp=sharing" },
-          { label: "Papel Membretado (DOCX)", url: "https://drive.google.com/drive/folders/1RXj1Mv0t1azJoiWMOhEldfMNfbwclXXm?usp=sharing" }
-        ]
-      },
-      "88f62dd4f34bc0c54550634cee859bb2178aa0e69041e1bee3be5a132e1c7456": {
-        title: "Curso Manejo Básico de Fracturas (MBF) – 2ª Ed. 2025",
-        meta: "Material oficial para docentes/consultores (logos, PPT, manual de marca, social kit)",
-        files: [
-          { label: "Logos (PNG)", url: "https://drive.google.com/drive/folders/1ooz6Z0YICAqP7PP5UgmPq1v1DFIkv9pi?usp=sharing" },
-          { label: "Plantilla PPT (PPTX)", url: "https://drive.google.com/drive/folders/1qJqRPO2akiosdJ9BMBXp49gYgrRExcD2?usp=sharing" },
-          { label: "Manual de Marca (PDF)", url: "https://drive.google.com/file/d/100O3Xp4CzybPdo-uEJqjNLpvbPMUeB-S/view?usp=sharing" },
-          { label: "Social Kit (JPG)", url: "https://drive.google.com/drive/folders/1msdy6xita4RcTesyg7qV3Q51WGu97qPZ?usp=sharing" },
-          { label: "Papel Membretado (DOCX)", url: "https://drive.google.com/drive/folders/1RXj1Mv0t1azJoiWMOhEldfMNfbwclXXm?usp=sharing" }
-        ]
-      }
-    };
-
-    let currentKeyHex = null;
-    const ATTEMPT_KEY = 'edusalud_attempts_session';
-
-    // --- manejo de intentos (no bloqueante, usa sessionStorage) ---
-    function recordAttempt() {
-      try {
-        const raw = sessionStorage.getItem(ATTEMPT_KEY);
-        const n = raw ? Number(raw) : 0;
-        const next = n + 1;
-        sessionStorage.setItem(ATTEMPT_KEY, String(next));
-        return next;
-      } catch (e) { return 0; }
-    }
-    function clearAttempts() {
-      try { sessionStorage.removeItem(ATTEMPT_KEY); } catch(e) {}
-    }
-    function getAttemptsCount() {
-      try { return Number(sessionStorage.getItem(ATTEMPT_KEY) || 0); } catch(e) { return 0; }
-    }
-
-    // mensajes de ayuda según número de intentos
-    function maybeShowAttemptsWarning() {
-      const attempts = getAttemptsCount();
-      const msg = $('#msg');
-      if (!msg) return;
-      if (attempts === 0) {
-        // nada
-        return;
-      }
-      if (attempts >= 8 && attempts < 15) {
-        msg.textContent = `Ha intentado ${attempts} veces. Verifique que el código esté correcto antes de seguir intentando.`;
-        msg.classList.add('error');
-      } else if (attempts >= 15) {
-        msg.textContent = `Ha realizado muchos intentos (${attempts}). Si el problema persiste, solicite el código a coordinación.`;
-        msg.classList.add('error');
-      }
-    }
-
-    function showAccess() { $('#access').classList.remove('hidden'); $('#content').classList.add('hidden'); $('#code').focus(); }
-    function showContent() { $('#access').classList.add('hidden'); $('#content').classList.remove('hidden'); }
-
-    function renderCourse(keyHex) {
-      const data = ACCESS_HASH_MAP[keyHex];
-      if (!data) return;
-      $('#courseTitle').textContent = data.title;
-      $('#courseMeta').textContent = data.meta || '';
-      const list = $('#filelist');
-      list.innerHTML = '';
-      (data.files || []).forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'file';
-        let host = '';
-        try { host = new URL(item.url).hostname; } catch { host = ''; }
-        row.innerHTML = `<div><strong>${item.label}</strong><div class="meta">${host}</div></div>`;
-        const btn = document.createElement('button');
-        btn.className = 'btn';
-        btn.type = 'button';
-        btn.textContent = 'Descargar';
-        btn.addEventListener('click', () => downloadFile(item.url));
-        row.appendChild(btn);
-        list.appendChild(row);
-      });
-    }
-
-    async function tryLoginByCode(code) {
-      const msg = $('#msg');
-      msg.textContent = 'Verificando…';
-      msg.classList.remove('error');
-
-      if (!code || String(code).trim().length === 0) {
-        msg.textContent = 'Ingrese un código válido.';
-        msg.classList.add('error');
-        return false;
-      }
-
-      try {
-        const hex = await sha256Hex(code);
-
-        if (ACCESS_HASH_MAP[hex]) {
-          currentKeyHex = hex;
-          // limpiar intentos tras login exitoso
-          clearAttempts();
-
-          // Mostrar pantalla de carga y animación
-          const overlay = document.getElementById('loadingOverlay');
-          if (overlay) {
-            overlay.classList.remove('hidden');
-            overlay.setAttribute('aria-hidden', 'false');
-            try { document.querySelector('.scanner').style.display = 'block'; } catch(e) {}
-            try { document.body.style.overflow = 'hidden'; } catch(e) {}
-          }
-
-          // iniciar la animación de carga si está disponible
-          try {
-            if (window.initLoadingAnimation) {
-              // initLoadingAnimation devuelve una Promise que resuelve cuando termina la animación corta
-              await window.initLoadingAnimation();
-            } else {
-              // fallback: esperar un tiempo fijo si no hay animación
-              await new Promise(r => setTimeout(r, 1200));
-            }
-          } catch (e) {
-            console.warn('Error en animación de carga', e);
-            await new Promise(r => setTimeout(r, 900));
-          }
-
-          // proceder a mostrar el contenido protegido
-          setQueryParam('code', btoa(code));
-          renderCourse(hex);
-
-          // ocultar overlay
-          if (overlay) {
-            overlay.classList.add('hidden');
-            overlay.setAttribute('aria-hidden', 'true');
-            try { document.querySelector('.scanner').style.display = 'none'; } catch(e) {}
-            try { document.body.style.overflow = ''; } catch(e) {}
-          }
-
-          showContent();
-          return true;
-        } else {
-          // registro del intento (solo en sessionStorage, no bloqueante)
-          const attempts = recordAttempt();
-          // mostrar mensaje amigable
-          msg.textContent = 'Código inválido. Verifique y vuelva a intentar.';
-          msg.classList.add('error');
-          // advertencias si ya hay varios intentos
-          maybeShowAttemptsWarning();
-          return false;
-        }
-      } catch (e) {
-        console.error(e);
-        msg.textContent = 'Ocurrió un error al verificar el código.';
-        msg.classList.add('error');
-        return false;
-      }
-    }
-
-    // Eventos UI
-    $('#btn-enter').addEventListener('click', () => tryLoginByCode($('#code').value));
-    $('#code').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('#btn-enter').click(); } });
-    $('#btn-logout').addEventListener('click', () => { currentKeyHex = null; setQueryParam('code', null); showAccess(); });
-
-    $('#btn-copy-code-link').addEventListener('click', async () => {
-      if (!currentKeyHex) return;
-      const url = new URL(location.href);
-      const codeField = $('#code');
-      const encoded = url.searchParams.get('code');
-      const codeVal = (encoded ? atob(encoded) : codeField.value) || '';
-      if (!codeVal) return;
-      url.searchParams.set('code', btoa(codeVal));
-      try {
-        await navigator.clipboard.writeText(url.toString());
-        alert('Enlace copiado al portapapeles');
-      } catch (e) {
-        prompt('Copie este enlace:', url.toString());
-      }
-    });
-
-    // Init: precarga por ?code=BASE64
-    (async function init(){
-      $('#year').textContent = new Date().getFullYear();
-      const qp = new URLSearchParams(location.search);
-      const pre = qp.get('code');
-      if (pre) {
-        try {
-          const decoded = atob(pre);
-          if (decoded) {
-            const ok = await tryLoginByCode(decoded);
-            if (ok) {
-              try { $('#code').value = decoded; } catch(e) {}
-              return;
-            } else {
-              setQueryParam('code', null);
-              showAccess();
-              $('#msg').textContent = 'El enlace contiene código inválido o expirado.';
-              $('#msg').classList.add('error');
-              return;
-            }
-          }
-        } catch (e) {
-          console.warn('Parámetro code inválido', e);
-        }
-      }
-      // mostrar accesos y advertir si ya hay intentos previos en la sesión
-      showAccess();
-      maybeShowAttemptsWarning();
-    })();
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="assets/loading-screen.js" defer></script>
-
+  <!-- Scripts -->
+  <script src="electric-card.js?v=3" defer></script>
+  <script src="app.js?v=8" defer></script>
 </body>
 </html>
